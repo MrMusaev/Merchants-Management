@@ -1,0 +1,81 @@
+version: '3'
+services:
+
+    #PHP Service
+    merchants-app:
+        build: ./
+        image: merchants/php
+        container_name: merchants-app
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: app
+            SERVICE_TAGS: dev
+        working_dir: /var/www/default
+        volumes:
+            - ./:/var/www/default
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+            - /var/www/assets:/var/www/assets
+        networks:
+            - merchants-app-network
+
+    #Postgresql Service
+    merchants-db:
+        image: postgres:14.1
+        container_name: merchants-db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "${DB_EXTERNAL_PORT}:5432"
+        environment:
+            PGPASSWORD: '${DB_PASSWORD}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks:
+            - merchants-app-network
+
+
+    #Nginx Service
+    merchants-webserver:
+        image: nginx:alpine
+        container_name: merchants-webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "${APP_EXTERNAL_PORT}:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www/default
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+            - ./docker/nginx/logs:/var/log/nginx
+            - /var/www/assets:/var/www/assets
+        networks:
+            - merchants-app-network
+        depends_on:
+            - merchants-app
+            - merchants-db
+
+    #Redis
+    merchants-redis:
+        image: redis:alpine
+        container_name: merchants-redis
+        command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+        volumes:
+            - ./docker/redis:/data
+        ports:
+            - "${REDIS_EXTERNAL_PORT}:6379"
+        networks:
+            - merchants-app-network
+
+#Docker Networks
+networks:
+    merchants-app-network:
+        driver: bridge
+
+#Volumes
+volumes:
+    pgdata:
+        driver: local

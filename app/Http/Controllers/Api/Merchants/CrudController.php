@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Api\Merchants;
 use App\Exceptions\Custom\FrontEndException;
 use App\Http\Controllers\Controller;
 use App\Http\Data\Api\Merchants\EditData;
+use App\Http\Data\Api\Merchants\FilterData;
 use App\Http\Requests\Merchants\CreateRequest;
 use App\Http\Requests\Merchants\EditRequest;
+use App\Http\Requests\Merchants\FilterRequest;
 use App\Http\Resources\Merchants\MerchantDetailsResource;
+use App\Http\Resources\Merchants\MerchantListResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ServerErrorResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Merchants\Merchant;
+use App\ReadCases\MerchantReadCase;
 use App\Services\Merchants\CrudService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -22,9 +27,20 @@ class CrudController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(FilterRequest $request, MerchantReadCase $readCase): AnonymousResourceCollection|Response
     {
-        //
+        try {
+            $filterData = FilterData::from($request->all());
+
+            $query = $readCase->filter($filterData);
+            $readCase->addSort($query, $filterData->sort_field, $filterData->sort_direction);
+
+            return MerchantListResource::collection($query->paginate($filterData->per_page))
+                ->additional(['code' => 1]);
+        } catch (Throwable $e) {
+            report($e);
+            return new ServerErrorResponse($e);
+        }
     }
 
     /**
@@ -44,6 +60,9 @@ class CrudController extends Controller
         } catch (FrontEndException $e) {
             report($e);
             return new ApiErrorResponse($e);
+        } catch (Throwable $e) {
+            report($e);
+            return new ServerErrorResponse($e);
         }
     }
 

@@ -29,13 +29,14 @@ class MerchantFactory extends Factory
      */
     public function definition(): array
     {
+        $creator_id = rand(2, 3);
         return [
             'name' => $this->faker->company,
             'lat' => $this->faker->latitude(self::MIN_LAT, self::MAX_LAT),
             'lng' => $this->faker->longitude(self::MIN_LON, self::MAX_LON),
             'status' => array_rand(Status::getSelection()),
-            'creator_id' => 1,
-            'updater_id' => 1,
+            'creator_id' => $creator_id,
+            'updater_id' => $creator_id,
         ];
     }
 }

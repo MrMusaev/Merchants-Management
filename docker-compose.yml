@@ -21,7 +21,7 @@ services:
 
     #Postgresql Service
     merchants-db:
-        image: postgres:14.1
+        image: postgres:15.2
         container_name: merchants-db
         restart: unless-stopped
         tty: true

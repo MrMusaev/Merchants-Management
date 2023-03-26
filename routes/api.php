@@ -29,6 +29,8 @@ Route::prefix('/v1')->group(function () {
         });
 
         // Merchant routes
+        Route::get('/merchants/nearest', [CrudController::class, 'nearest'])
+            ->name('merchants.nearest');
         Route::resource('merchants', CrudController::class)
             ->except(['create', 'edit']);
     });

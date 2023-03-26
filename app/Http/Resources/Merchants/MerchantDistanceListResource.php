@@ -2,12 +2,11 @@
 
 namespace App\Http\Resources\Merchants;
 
-use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\User\UserListResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MerchantListResource extends JsonResource
+class MerchantDistanceListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,6 +21,10 @@ class MerchantListResource extends JsonResource
             'slug' => $this->slug,
             'lat' => $this->lat,
             'lng' => $this->lng,
+            'distance' => [
+                'number' => floatval($this->distance),
+                'text' => meter_distance_to_text(floatval($this->distance)),
+            ],
             'status' => [
                 'code' => $this->status,
                 'label' => $this->status_label

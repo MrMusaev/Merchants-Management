@@ -5,17 +5,19 @@ namespace App\ReadCases;
 use App\Http\Data\Api\Merchants\FilterData;
 use App\Models\Merchants\Merchant;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class MerchantReadCase
 {
     private function baseQuery(): Builder
     {
-        return Merchant::query();
+        return Merchant::query()
+            ->with(['creator']);
     }
 
-    public function filter(FilterData $data): Builder
+    public function filter(FilterData $data, ?Builder $query): Builder
     {
-        $query = $this->baseQuery();
+        $query = $query ?: $this->baseQuery();
 
         $this->addKeywordFilter($query, $data->keyword);
         $this->addStatusFilter($query, $data->status);
@@ -41,4 +43,14 @@ class MerchantReadCase
     {
         $query->orderBy($sort_field, $sort_direction);
     }
+
+    public function nearest(float $lat, float $lng): Builder
+    {
+        return $this->baseQuery()
+            ->select('*',
+                DB::raw("earth_distance(ll_to_earth(lat, lng), ll_to_earth($lat, $lng)) AS distance")
+            )
+            ->orderBy('distance');
+    }
+
 }

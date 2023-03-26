@@ -6,10 +6,13 @@ use App\Exceptions\Custom\FrontEndException;
 use App\Http\Controllers\Controller;
 use App\Http\Data\Api\Merchants\EditData;
 use App\Http\Data\Api\Merchants\FilterData;
+use App\Http\Data\Api\Merchants\NearestData;
 use App\Http\Requests\Merchants\CreateRequest;
 use App\Http\Requests\Merchants\EditRequest;
 use App\Http\Requests\Merchants\FilterRequest;
+use App\Http\Requests\Merchants\NearestRequest;
 use App\Http\Resources\Merchants\MerchantDetailsResource;
+use App\Http\Resources\Merchants\MerchantDistanceListResource;
 use App\Http\Resources\Merchants\MerchantListResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ServerErrorResponse;
@@ -36,6 +39,25 @@ class CrudController extends Controller
             $readCase->addSort($query, $filterData->sort_field, $filterData->sort_direction);
 
             return MerchantListResource::collection($query->paginate($filterData->per_page))
+                ->additional(['code' => 1]);
+        } catch (Throwable $e) {
+            report($e);
+            return new ServerErrorResponse($e);
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function nearest(NearestRequest $request, MerchantReadCase $readCase): AnonymousResourceCollection|Response
+    {
+        try {
+            $filterData = FilterData::from($request->all());
+
+            $query = $readCase->nearest($filterData->lat, $filterData->lng);
+            $readCase->filter($filterData, $query);
+
+            return MerchantDistanceListResource::collection($query->paginate($filterData->per_page))
                 ->additional(['code' => 1]);
         } catch (Throwable $e) {
             report($e);

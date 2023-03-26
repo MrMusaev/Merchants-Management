@@ -11,7 +11,9 @@ class FilterData extends Data
         public ?string $keyword = null,
         public ?string $sort_field = 'id',
         public ?string $sort_direction = 'asc',
-        public ?int $per_page = 20,
+        public ?int    $per_page = 20,
+        public ?float  $lat = null,
+        public ?float  $lng = null,
     )
     {
     }

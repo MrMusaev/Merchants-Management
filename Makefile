@@ -15,7 +15,7 @@ db:
 	docker-compose exec merchants-db bash
 
 models:
-	php artisan ide-helper:models
+	php artisan ide-helper:models -W
 
 swagger-generate:
 	php artisan l5-swagger:generate

@@ -45,6 +45,7 @@ use Spatie\Sluggable\SlugOptions;
  * @method static Builder|Merchant whereCreatorId($value)
  * @method static Builder|Merchant whereUpdaterId($value)
  * @mixin Eloquent
+ * @mixin \Eloquent
  */
 class Merchant extends Model
 {

@@ -19,6 +19,7 @@ use App\Http\Responses\SuccessResponse;
 use App\Models\Merchants\Merchant;
 use App\ReadCases\MerchantReadCase;
 use App\Services\Merchants\CrudService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -92,9 +93,15 @@ class CrudController extends Controller
      */
     public function show(Merchant $merchant): Response
     {
-        return new SuccessResponse(
-            new MerchantDetailsResource($merchant)
-        );
+        try {
+            $this->authorize('view', $merchant);
+            return new SuccessResponse(
+                new MerchantDetailsResource($merchant)
+            );
+        } catch (AuthorizationException $e) {
+            report($e);
+            return new ApiErrorResponse($e);
+        }
     }
 
     /**
@@ -103,6 +110,8 @@ class CrudController extends Controller
     public function update(EditRequest $request, CrudService $service, Merchant $merchant): Response
     {
         try {
+            $this->authorize('update', $merchant);
+
             $data = EditData::from($request);
             $user = Auth::user();
 
@@ -111,7 +120,7 @@ class CrudController extends Controller
             return new SuccessResponse(
                 new MerchantDetailsResource($merchant)
             );
-        } catch (FrontEndException $e) {
+        } catch (AuthorizationException | FrontEndException $e) {
             report($e);
             return new ApiErrorResponse($e);
         } catch (Throwable $e) {
@@ -126,12 +135,14 @@ class CrudController extends Controller
     public function destroy(CrudService $service, Merchant $merchant): Response
     {
         try {
+            $this->authorize('delete', $merchant);
+
             $service->destroy($merchant);
 
             return new SuccessResponse([
                 "message" => __("Record successfully deleted")
             ]);
-        } catch (FrontEndException $e) {
+        } catch (AuthorizationException | FrontEndException $e) {
             report($e);
             return new ApiErrorResponse($e);
         } catch (Throwable $e) {

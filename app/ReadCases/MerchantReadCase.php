@@ -4,15 +4,23 @@ namespace App\ReadCases;
 
 use App\Http\Data\Api\Merchants\FilterData;
 use App\Models\Merchants\Merchant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MerchantReadCase
 {
     private function baseQuery(): Builder
     {
+        /* @var User $user */
+        $user = Auth::user();
+
         return Merchant::query()
-            ->with(['creator']);
+            ->with(['creator'])
+            ->when(!$user->isSuperAdmin(), function (Builder $query) use ($user) {
+                return $query->where('creator_id', '=', $user->id);
+            });
     }
 
     public function filter(FilterData $data, ?Builder $query = null): Builder

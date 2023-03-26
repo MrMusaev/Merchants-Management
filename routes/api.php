@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Merchants\CrudController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,15 +17,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('/v1')->group(function () {
-    // Merchant routes
-    Route::resource('merchants', CrudController::class)
-        ->except(['create', 'edit']);
+    // Auth APIs
+    Route::post('/register', [AuthController::class, 'register'])
+        ->name('merchants.register');
 
     // Auth required routes
     Route::middleware('auth:sanctum')->group(function () {
-
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
+
+        // Merchant routes
+        Route::resource('merchants', CrudController::class)
+            ->except(['create', 'edit']);
     });
 });

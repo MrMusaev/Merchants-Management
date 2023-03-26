@@ -6,7 +6,6 @@ use App\Exceptions\Custom\FrontEndException;
 use App\Http\Controllers\Controller;
 use App\Http\Data\Api\Merchants\EditData;
 use App\Http\Data\Api\Merchants\FilterData;
-use App\Http\Data\Api\Merchants\NearestData;
 use App\Http\Requests\Merchants\CreateRequest;
 use App\Http\Requests\Merchants\EditRequest;
 use App\Http\Requests\Merchants\FilterRequest;

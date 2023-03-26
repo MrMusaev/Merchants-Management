@@ -15,7 +15,7 @@ class MerchantReadCase
             ->with(['creator']);
     }
 
-    public function filter(FilterData $data, ?Builder $query): Builder
+    public function filter(FilterData $data, ?Builder $query = null): Builder
     {
         $query = $query ?: $this->baseQuery();
 

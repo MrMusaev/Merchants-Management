@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Data\Api\Merchants\EditData;
 use App\Http\Requests\Merchants\CreateRequest;
 use App\Http\Requests\Merchants\EditRequest;
-use App\Http\Resources\Merchants\MerchantListResource;
+use App\Http\Resources\Merchants\MerchantDetailsResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ServerErrorResponse;
 use App\Http\Responses\SuccessResponse;
@@ -39,7 +39,7 @@ class CrudController extends Controller
             $merchant = $service->create($data, $creator);
 
             return new SuccessResponse(
-                new MerchantListResource($merchant)
+                new MerchantDetailsResource($merchant)
             );
         } catch (FrontEndException $e) {
             report($e);
@@ -53,7 +53,7 @@ class CrudController extends Controller
     public function show(Merchant $merchant): Response
     {
         return new SuccessResponse(
-            new MerchantListResource($merchant)
+            new MerchantDetailsResource($merchant)
         );
     }
 
@@ -69,7 +69,7 @@ class CrudController extends Controller
             $merchant = $service->edit($data, $merchant, $user);
 
             return new SuccessResponse(
-                new MerchantListResource($merchant)
+                new MerchantDetailsResource($merchant)
             );
         } catch (FrontEndException $e) {
             report($e);

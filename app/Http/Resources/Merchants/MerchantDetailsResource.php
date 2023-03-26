@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Merchants;
 
+use App\Http\Resources\User\UserDetailsResource;
+use App\Http\Resources\User\UserListResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MerchantListResource extends JsonResource
+class MerchantDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,7 +25,11 @@ class MerchantListResource extends JsonResource
             'status' => [
                 'code' => $this->status,
                 'label' => $this->status_label
-            ]
+            ],
+            'creator' => UserListResource::make($this->creator),
+            'updater' => UserListResource::make($this->updater),
+            'created_at' => $this->created_at->format('d-m-Y H:i:s'),
+            'updated_at' => $this->updated_at->format('d-m-Y H:i:s'),
         ];
     }
 }

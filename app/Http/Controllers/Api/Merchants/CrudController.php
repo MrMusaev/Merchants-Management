@@ -8,9 +8,9 @@ use App\Http\Data\Api\Merchants\EditData;
 use App\Http\Requests\Merchants\CreateRequest;
 use App\Http\Requests\Merchants\EditRequest;
 use App\Http\Resources\Merchants\MerchantListResource;
-use App\Http\Responses\Backend\ApiErrorResponse;
-use App\Http\Responses\Backend\ServerErrorResponse;
-use App\Http\Responses\Backend\SuccessResponse;
+use App\Http\Responses\ApiErrorResponse;
+use App\Http\Responses\ServerErrorResponse;
+use App\Http\Responses\SuccessResponse;
 use App\Models\Merchants\Merchant;
 use App\Services\Merchants\CrudService;
 use Illuminate\Http\Response;
@@ -44,9 +44,6 @@ class CrudController extends Controller
         } catch (FrontEndException $e) {
             report($e);
             return new ApiErrorResponse($e);
-        } catch (Throwable $e) {
-            report($e);
-            return new ServerErrorResponse($e);
         }
     }
 

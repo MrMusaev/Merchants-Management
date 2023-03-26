@@ -7,6 +7,9 @@ class ErrorCodes
     const ROUTE_NOT_FOUND = -10001;
     const MODEL_NOT_FOUND = -10004;
 
+    const UNAUTHENTICATED = -20001;
+    const AUTH_CREDENTIALS_FAILED = -20002;
+
     const EDIT_ID_NOT_SAME = -80001;
     const ERROR_WHILE_SAVING = -80002;
 

@@ -9,7 +9,7 @@ class Status
     const PENDING = 1;
     const ACTIVE = 10;
 
-    public static function getLabel(int $status): string
+    public static function getLabel(?int $status): string
     {
         return match ($status) {
             self::INACTIVE => __("Inactive"),

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Responses\Backend;
+namespace App\Http\Responses;
 
 use Illuminate\Http\Response;
 
